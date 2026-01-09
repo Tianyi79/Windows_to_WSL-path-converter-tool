@@ -3,20 +3,20 @@
 A lightweight web-based tool for converting Windows file paths to WSL (Windows Subsystem for Linux) format. Perfect for developers working across Windows and WSL environments who need to quickly convert file paths for command-line operations.
 
 # Features
-• Instant Path Conversion - Paste Windows paths and get WSL paths in real-time
-• File Picker Integration - Select multiple files through a browser dialog
-• Folder Picker Support - Choose entire directories with all nested files
-• Base Path Reconstruction - Work around browser security limitations by specifying a base Windows path
-• Batch Processing - Convert multiple paths at once
-• One-Click Copy - Copy all converted paths to clipboard instantly
-• No Installation Required - Pure HTML/CSS/JavaScript, runs entirely in your browser
-• Offline Capable - No server or internet connection needed
+- • Instant Path Conversion - Paste Windows paths and get WSL paths in real-time
+- • File Picker Integration - Select multiple files through a browser dialog
+- • Folder Picker Support - Choose entire directories with all nested files
+- • Base Path Reconstruction - Work around browser security limitations by specifying a base Windows path
+- • Batch Processing - Convert multiple paths at once
+- • One-Click Copy - Copy all converted paths to clipboard instantly
+- • No Installation Required - Pure HTML/CSS/JavaScript, runs entirely in your browser
+- • Offline Capable - No server or internet connection needed
 
 # Use Cases
-• Converting file paths for WSL command-line operations
-• Batch processing files stored on Windows from WSL
-• Scripting workflows that bridge Windows and WSL environments
-• Quick path format conversion without manual typing
+- • Converting file paths for WSL command-line operations
+- • Batch processing files stored on Windows from WSL
+- • Scripting workflows that bridge Windows and WSL environments
+-  • Quick path format conversion without manual typing
 
 # How It Works
 
@@ -25,26 +25,26 @@ The tool converts Windows paths like:
 Into WSL paths like:
 
 ## Conversion Rules
-• Converts drive letters (C:, D:, etc.) to /mnt/c, /mnt/d, etc.
-• Replaces backslashes (\) with forward slashes (/)
-• Handles quoted paths automatically
-• Preserves relative paths when no drive letter is present
+- • Converts drive letters (C:, D:, etc.) to /mnt/c, /mnt/d, etc.
+- • Replaces backslashes (\) with forward slashes (/)
+- • Handles quoted paths automatically
+- • Preserves relative paths when no drive letter is present
 
 # Usage
 
-Method 1: Manual Paste
+### Method 1: Manual Paste
 Open index.html in any modern web browser
 Paste Windows paths into the left textarea (one per line)
 WSL paths appear automatically in the right textarea
 Click "Copy Output" to copy converted paths
 
-Method 2: File Picker
+### Method 2: File Picker
 (Optional but recommended) Enter your base Windows path (e.g., C:\Users\username\Desktop\project)
 Click "Pick Files…" to select multiple files
 Tool generates full Windows paths and converts them to WSL format
 Click "Copy Output" to use in your terminal
 
-Method 3: Folder Picker
+### Method 3: Folder Picker
 (Optional but recommended) Enter your base Windows path
 Click "Pick Folder…" to select an entire directory
 Tool processes all files recursively and converts paths
@@ -68,27 +68,17 @@ No installation needed! Just download and open index.html in your browser.
 
 # Browser Compatibility
 
-Works in all modern browsers:
-• Chrome/Edge (recommended)
-• Firefox
-• Safari
-• Opera
+- Works in all modern browsers:
+- • Chrome/Edge (recommended)
+- • Firefox
+- • Safari
+- • Opera
 
 # Requires support for:
-• File API
-• Clipboard API (for copy functionality)
-• webkitdirectory attribute (for folder picking)
-
-# Example Workflow
-
-Scenario: Processing VTT subtitle files in WSL
-Your subtitle files are stored in C:\Users\reotiany\Desktop\subtitles\
-You need to run a Python script in WSL to process them
-Enter base path: C:\Users\reotiany\Desktop\subtitles
-Click "Pick Folder…" and select the subtitles folder
-Copy the converted WSL paths
-Paste into your WSL terminal:
-
+- • File API
+- • Clipboard API (for copy functionality)
+- • webkitdirectory attribute (for folder picking)
+ 
 # Tips
 • Bookmark it - Save the HTML file to your desktop or bookmark it for quick access
 • Use base path - Always fill in the base Windows path for accurate full path conversion
@@ -116,4 +106,4 @@ Contributions welcome! Feel free to:
 
 Created for developers working across Windows and WSL environments who need a quick, reliable path conversion tool.
 
-# Note: This tool is designed for local use and does not collect or transmit any data. All conversions happen entirely within your browser.
+### Note: This tool is designed for local use and does not collect or transmit any data. All conversions happen entirely within your browser.
