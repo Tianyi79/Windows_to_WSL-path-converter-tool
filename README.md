@@ -24,7 +24,7 @@ The tool converts Windows paths like:
 
 Into WSL paths like:
 
-Conversion Rules
+## Conversion Rules
 • Converts drive letters (C:, D:, etc.) to /mnt/c, /mnt/d, etc.
 • Replaces backslashes (\) with forward slashes (/)
 • Handles quoted paths automatically
