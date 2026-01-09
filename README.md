@@ -52,17 +52,17 @@ Into WSL paths like:
 
 # Why Base Windows Path?
 
-Due to browser security restrictions, file pickers only provide:
+## Due to browser security restrictions, file pickers only provide:
 - File names when picking individual files
 - Relative paths when picking folders
 
 By specifying a base Windows path, the tool can reconstruct full absolute paths like C:\Users\username\Desktop\project\subfolder\file.txt and convert them properly to WSL format.
 
-Without base path:
+### Without base path:
 
-With base path (C:\Users\username\Desktop\project):
+### With base path (C:\Users\username\Desktop\project):
 
-Installation
+# Installation
 
 No installation needed! Just download and open index.html in your browser.
 
@@ -106,4 +106,5 @@ Contributions welcome! Feel free to:
 
 Created for developers working across Windows and WSL environments who need a quick, reliable path conversion tool.
 
-### Note: This tool is designed for local use and does not collect or transmit any data. All conversions happen entirely within your browser.
+### Note: 
+This tool is designed for local use and does not collect or transmit any data. All conversions happen entirely within your browser.
