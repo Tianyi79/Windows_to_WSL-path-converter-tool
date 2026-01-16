@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+ <meta charset="utf-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1" />
+ <title>Win WSL Path Converter (Enhanced)</title> →
+ <style>
+ body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 18px; }
+ .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+ .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+ textarea, input[type="text"] {
+ width: 100%;
+ font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+ padding: 10px;
+ box-sizing: border-box;
+ }
+ textarea { min-height: 260px; }
+ button { padding: 8px 12px; cursor: pointer; }
+ .hint { color: #666; font-size: 12px; margin-top: 6px; line-height: 1.45; }
+ .ok { color: #0a7; }
+ .warn { color: #c60; }
+ @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+ </style>
+</head>
+<body>
+ <h2>Win WSL Path Converter (Enhanced)</h2> →
+ <div class="row">
+ <button id="pickFilesBtn">Pick Files…</button>
+ <button id="pickFolderBtn">Pick Folder…</button>
+ <button id="copyBtn">Copy Output</button>
+ <button id="clearBtn">Clear</button>
+ </div>
+ <div style="margin-top: 12px;">
+ <label><b>Base Windows Path (optional but recommended)</b></label>
+ <input id="baseWin" type="text" placeholder="e.g. C:\Users\...\Desktop\..." />
+ <div class="hint">
+ <span class="warn">Why needed?</span>
+ Browsers don’t reveal real absolute paths like <code>C:\Users\...</code>.
+ When you pick a folder, the page only knows a <i>relative</i> path inside that folder.
+ If you fill a Base Windows Path, we can reconstruct full Windows paths and convert them to
+WSL.
+ </div>
+ </div>
+ <div class="grid">
+ <div>
+ <h3 style="margin: 8px 0;">Windows paths (paste or generated)</h3>
+ <textarea id="input" placeholder='Paste Windows paths here (one per line) OR use Pick
+Files/Folder above.'></textarea>
+ <div class="hint" id="pickInfo"></div>
+ </div>
+ <div>
+ <h3 style="margin: 8px 0;">WSL paths</h3>
+ <textarea id="output" readonly></textarea>
+ <div class="hint" id="status">Ready</div>
+ </div>
+ </div>
+ <!-- hidden pickers -->
+ <input id="filePicker" type="file" multiple style="display:none" />
+ <input id="folderPicker" type="file" webkitdirectory directory multiple style="display:none" />
+ <script>
+ const DRIVE_RE = /^\s*([A-Za-z]):[\\/](.*)$/;
+ function winToWsl(path) {
+ let p = path.trim();
+ p = p.replace(/^["']|["']$/g, ""); // strip surrounding quotes
+ const m = p.match(DRIVE_RE);
+ if (!m) return p.replaceAll("\\", "/");
+ const drive = m[1].toLowerCase();
+ const rest = m[2].replaceAll("\\", "/");
+ return `/mnt/${drive}/${rest}`;
+ }
+ function normalizeWinPath(p) {
+ let s = (p || "").trim();
+ s = s.replaceAll("/", "\\");
+ s = s.replace(/\\\\+/g, "\\\\").replace(/\\{3,}/g, "\\\\");
+ return s;
+ }
+ function joinWin(base, rel) {
+ const b = normalizeWinPath(base).replace(/\\+$/g, "");
+ const r = normalizeWinPath(rel).replace(/^\\+/g, "");
+ if (!b) return r;
+ return b + "\\" + r;
+ }
+ function convertBlock(text) {
+ return text.split(/\r?\n/).map(line => line.trim() ? winToWsl(line) : "").join("\n");
+ }
+ const input = document.getElementById("input");
+ const output = document.getElementById("output");
+ const baseWin = document.getElementById("baseWin");
+ const status = document.getElementById("status");
+ const pickInfo = document.getElementById("pickInfo");
+ function update() {
+ const raw = input.value;
+ const converted = convertBlock(raw);
+ output.value = converted;
+ const n = raw.split(/\r?\n/).filter(l => l.trim()).length;
+ status.textContent = n ? `Converted ${n} path(s).` : "Ready";
+ status.className = "hint " + (n ? "ok" : "");
+ }
+ input.addEventListener("input", update);
+ const filePicker = document.getElementById("filePicker");
+ document.getElementById("pickFilesBtn").addEventListener("click", () => filePicker.click());
+ filePicker.addEventListener("change", () => {
+ const files = Array.from(filePicker.files || []);
+ if (!files.length) return;
+ const base = baseWin.value.trim();
+ const lines = files.map(f => base ? joinWin(base, f.name) : f.name);
+ appendLines(lines);
+ pickInfo.textContent = base
+ ? `Picked ${files.length} file(s). Generated Windows paths using Base Windows Path + file
+names.`
+ : `Picked ${files.length} file(s). Browser only provides file names. Fill Base Windows Path to
+generate full Windows paths.`;
+ update();
+ filePicker.value = "";
+ });
+ const folderPicker = document.getElementById("folderPicker");
+ document.getElementById("pickFolderBtn").addEventListener("click", () => folderPicker.click());
+ folderPicker.addEventListener("change", () => {
+ const files = Array.from(folderPicker.files || []);
+ if (!files.length) return;
+ const base = baseWin.value.trim();
+ const lines = files.map(f => {
+ const rel = f.webkitRelativePath || f.name;
+ return base ? joinWin(base, rel) : rel;
+ });
+ appendLines(lines);
+ pickInfo.textContent = base
+ ? `Picked folder with ${files.length} file(s). Generated Windows paths using Base Windows Path
++ relative paths.`
+ : `Picked folder with ${files.length} file(s). Browser gives only relative paths. Fill Base Windows
+Path to generate full Windows paths.`;
+ update();
+ folderPicker.value = "";
+ });
+ function appendLines(lines) {
+ const cur = input.value.trimEnd();
+ const add = lines.join("\n");
+ input.value = cur ? (cur + "\n" + add) : add;
+ }
+ document.getElementById("copyBtn").addEventListener("click", async () => {
+ try {
+ await navigator.clipboard.writeText(output.value);
+ status.textContent = "Copied output to clipboard.";
+ } catch {
+ output.select();
+ document.execCommand("copy");
+ status.textContent = "Copied (fallback).";
+ }
+ });
+ document.getElementById("clearBtn").addEventListener("click", () => {
+ input.value = "";
+ output.value = "";
+ pickInfo.textContent = "";
+ status.textContent = "Ready";
+ input.focus();
+ });
+ baseWin.addEventListener("input", () => {
+ update();
+ });
+ update();
+ </script>
+</body>
+</html>
